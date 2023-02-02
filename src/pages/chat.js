@@ -1,12 +1,13 @@
 import classNames from "classnames";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { io } from "socket.io-client";
 import styled from "styled-components";
+import { SocketContext } from "../components/socketContext/socketContext";
 
-const socket = io("http://localhost:8080/chat");
+// 훅분리 및 방에 접속해서 join
 
 const Chat = () => {
+  const socket = useContext(SocketContext);
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const chatContainerEl = useRef(null);
@@ -33,9 +34,7 @@ const Chat = () => {
     };
 
     socket.on("message", messageHandler);
-
     return () => {
-      console.log("chatoff");
       socket.off("message", messageHandler);
     };
   }, []);

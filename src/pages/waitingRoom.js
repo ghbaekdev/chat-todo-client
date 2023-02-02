@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
 import styled from "styled-components";
+import { SocketContext } from "../components/socketContext/socketContext";
 
-const socket = io("http://localhost:8080/chat");
+// const socket = io(`${process.env.REACT_APP_BASE_URL}/chat`);
 
 const WaitingRoom = () => {
   const [rooms, setRooms] = useState([]);
   const navigate = useNavigate();
+  const socket = useContext(SocketContext);
 
   useEffect(() => {
     const roomListHandler = (rooms) => {
@@ -31,13 +32,13 @@ const WaitingRoom = () => {
     };
   }, []);
 
-  const onCreateRoom = () => {
+  const onCreateRoom = (room) => {
     const roomName = prompt("방 이름을 입력해 주세요.");
     if (!roomName) return alert("방 이름은 반드시 입력해야 합니다.");
 
     socket.emit("create-room", roomName, (response) => {
       if (!response.success) return alert(response.payload);
-      navigate(`/chat/${response.payload}`);
+      navigate(`/chat/${roomName}`);
     });
   };
 
