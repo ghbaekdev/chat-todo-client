@@ -1,7 +1,12 @@
 import { instance } from ".";
+import { getCookie } from "../utils/cookie";
 
 export const getTodoList = async (url) => {
-  const response = await instance.get(url);
+  const response = await instance.get(url, {
+    headers: {
+      Authorization: `Bearer ${getCookie("token")}`,
+    },
+  });
   return response.data;
 };
 
